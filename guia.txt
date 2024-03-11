@@ -1,0 +1,241 @@
+
+Crear un proyecto basico en Astro
+---------------------------------
+
+1) Desde vs code abrir una terminal y ejecutar el comando:
+    npm create astro@latest .
+      NOTA: Luego seleccionar Empty, TypeScript (No),
+                              Install dependencies (Yes), Git (No)
+            Esto crea los directorio node_modules, public y src
+
+2) npm install bootstrap@latest
+
+3) Crear el archivo Layout.astro en el directorio src/layout
+   y colocar el siguiente contenido:
+
+    ---
+    import 'bootstrap/dist/css/bootstrap.css';
+    ---
+
+    <script src="bootstrap/dist/js/bootstrap.bundle.js"></script> 
+
+4) Copiar contenido del archivo index.astro en el archivo Layout.astro.
+   En el archivo Layout.astro sustituir la linea: <h1>Astro</h1>
+   por <slot/> donde <slot> representa el contenido de la etiqueta <body>
+   cuando el layout sea utilizados por otras paginas (*.astro)
+   Ahora el archivo quedara asi:
+
+        ---
+        import 'bootstrap/dist/css/bootstrap.css';
+        const {titulo} = Astro.params;
+        ---
+
+        <script src="bootstrap/dist/js/bootstrap.bundle.js"></script> 
+
+        <html lang="en">
+            <head>
+                <meta charset="utf-8" />
+                <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+                <meta name="viewport" content="width=device-width" />
+                <meta name="generator" content={Astro.generator} />
+                <title>{titulo}</title>
+            </head>
+            <body>
+                <slot/>
+            </body>
+        </html>
+
+    NOTA: La linea "const {titulo} = Astro.params;" indica que cuando sea usado
+          <Layout> (Layout.astro) como plantilla dentro de otro documento *.astro
+          <Layout> va a tener un atributo llamado "titulo".
+
+
+5) Crear en el directorio src/components los archivos Header.astro y Footer.astro.
+   Luego agregar el respectivo codigo en Html para cada archivo.
+
+     Por ejemplo el Header.astro quedaria asi:
+
+        ---
+
+        ---
+
+        <header>
+            <nav class="navbar navbar-expand-lg bg-black" data-bs-theme="dark">
+                <div class="container-fluid">
+                <a class="navbar-brand" href="#">Mi Pagina</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/productos">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/servicios">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contactos">Contactos</a>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </nav>
+        </header>
+
+
+6) Ahora en Layout.astro importar y utilizar las etiquetas <Header> y <Footer>
+   para agregarlas antes y despues de la etiqueta <slot> dentro de <body>
+   quedando esa parte asi:
+
+        ---
+        ...
+        import Header from "../components/Header.astro";
+        import Footer from "../components/Footer.astro";
+        ...
+        ---
+        ...
+
+        <html lang="en">        
+            ...   
+            <body>
+                <Header/>
+                <slot/>
+                <Footer/>
+            </body>
+            ...
+        </html>
+
+7) Crear en el directorio src/pages los archivos productos.astro,
+   servicios.astro y contactos.astro. 
+
+8) Luego en los archivos del directorio pages (desde index.astro hasta servicios.astro)
+   agregar el siguiente codigo que tiene el objetivo de importar el archivo Layout.astro
+   y utilizar la etiqueta <Layout> para que cada paginas (*.astro) del directorio
+   pages tenga como plantilla a <Layout> con su Header y Footer pero cada una de ellas
+   con diferente contenido (definido dentro de <Layout>) en la etiqueta <body> por medio del <slot>
+   Por Ejemplo para la pagina index.astro quedaria asi:
+
+            ---
+            import Layout from "../layout/Layout.astro";
+            ---
+
+            <Layout titulo="Index">
+                <h1 class="text-center py-3">Inicio</h1>
+            </Layout>
+
+9) Para probar localmente la pagina ejecutar:
+        npm run dev
+
+Preparar sitio web para publicar posteriormente
+-----------------------------------------------
+
+1) npm i gh-pages
+
+2) Agregar esta linea en la seccion "script":
+     "deploy": "gh-pages -d dist"
+   en astro.config.mjs quedando asi:
+
+        export default defineConfig({
+            site: 'https://profwilliamarte.github.io', /* aqui colocarias el nombre de tu cuenta*/
+            base: '/astroBasico',  /* aqui colocarias el nombre de tu repositorio*/
+            build: {
+                assets: 'astro' /// muy importante porque corrige el detalle que cuando se genera
+                                /// el directorio dist se evita que directorio se llame _astro
+            }
+        });
+
+3) Modificar el archivo Header.astro y colocar de prefijo el nombre base del repositorio
+   (astroBasico) por ejemplo la etiqueta <a> de inicio y productos quedaria asi:
+
+           ...
+             <a class="nav-link active" aria-current="page" href="/astroBasico">Inicio</a>
+           ...
+             <a class="nav-link" href="/astroBasico/productos">Productos</a>
+
+   NOTA: Si en otros archivos *.astro se manejan rutas para las imagenes o para
+         alguna ruta a otra pagina agregar de prefijo el nombre base del repositorio
+         (/astroBasico)
+         
+
+4) Para crear el directorio dist ejecutar:
+    npm run build
+
+Para subir solo el codigo fuente en github (Astro)
+--------------------------------------------------
+    Una vez que funcione bien la pagina realizar los siguientes pasos:
+
+Requisito: Tener git instalado
+
+1) Desde github crear el repositorio astroBasico
+
+2) Desde un terminal en vs code:
+
+    a) git init
+        Nota: Crear un repositorio de Git vacio localmente
+              Se crea el directorio oculto ".git"
+
+    b) git add .
+        Este comando se utiliza para agregar archivos al área de
+        preparación (staging area) antes de realizar una confirmación (commit).
+        Modifica el directorio .git/objects
+
+    c) Ejecutar los comandos:
+            git config --global user.email "you@example.com"
+            git config --global user.name "UserName"
+        Nota: Estos comandos sirven para conectar Git a tu usuario de github
+
+    d) git commit -m "Primer commit"
+        Nota: Este comando se utiliza para confirmar los cambios
+        realizados en los archivos agregados al área de preparación
+
+    e) git branch -M main
+        Nota: Crea una rama (branch) en el repositorio 
+
+    f) git remote add origin https://github.com/UserName/htmlCssJsBasico.git
+        Nota: Asocia esta rama con el repositorio remoto de github:
+        https://github.com/UserName/htmlCssJsBasico.git
+
+    g) git push -u origin main
+        Nota: Este comando se utiliza para enviar los cambios confirmados
+        al repositorio remoto (https://github.com/UserName/htmlCssJsBasico.git). 
+        En otras palabra sube el sitio
+
+        Nota: En el caso de linux se va a pedir un token que fue generado desde
+        github desde la opcion: Settings -> Developer Setting -> Personal access tokens 
+        Luego seleccionar classic token y seleccionar todos los checkboxes
+        del formulario y presionar el boton "Generar new token"
+              
+
+Para actualizar la rama actual con archivos modificados en la misma rama y repositorio
+---------------------------------------------------------------------------------------
+
+git add .
+
+git commit -m "2do commit"
+
+git push -u origin main
+
+
+Configurar GitHub Pages para desplegar la pagina
+------------------------------------------------
+
+    1) Setting -> y el la sección Code and automation ->Pages
+    2) En la sección Buid and deployment en el botón main seleccionar la
+       rama "main" que fue la que colocamos en el paso "2.e".
+    3) Despues seleccionamos en el siguiente botón /docs lo cambiamos a root 
+       y le damos al botosn Save
+
+    Debe salir un mensaje en la parte superior Github Pages source saved.
+
+    Luego se aparecera un enlace asi: https://UserName.github.io/htmlCssJsBasico/
+    que es la direccion desde donde la pagina web sera visualizada desde github
+
+
+
+
