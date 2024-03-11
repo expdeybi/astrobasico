@@ -137,9 +137,21 @@ Preparar sitio web para publicar posteriormente
 
 1) npm i gh-pages
 
-2) Agregar esta linea en la seccion "script":
-     "deploy": "gh-pages -d dist"
-   en astro.config.mjs quedando asi:
+2) En archivo package.json agregar en la seccion "script" la linea:
+   "deploy": "gh-pages -d dist"
+   Ahora este archivo en esa seccion debe ser asi:
+
+        "scripts": {
+            "dev": "astro dev",
+            "start": "astro dev",
+            "build": "astro build",
+            "preview": "astro preview",
+            "astro": "astro",
+            "deploy": "gh-pages -d dist" 
+        },
+
+3) En astro.config.mjs reemplazar la linea: export default defineConfig({});
+   por las siguientes lineas:
 
         export default defineConfig({
             site: 'https://profwilliamarte.github.io', /* aqui colocarias el nombre de tu cuenta*/
@@ -197,13 +209,13 @@ Requisito: Tener git instalado
     e) git branch -M main
         Nota: Crea una rama (branch) en el repositorio 
 
-    f) git remote add origin https://github.com/UserName/htmlCssJsBasico.git
+    f) git remote add origin https://github.com/UserName/astrobasico.git
         Nota: Asocia esta rama con el repositorio remoto de github:
-        https://github.com/UserName/htmlCssJsBasico.git
+        https://github.com/UserName/astrobasico.git
 
     g) git push -u origin main
         Nota: Este comando se utiliza para enviar los cambios confirmados
-        al repositorio remoto (https://github.com/UserName/htmlCssJsBasico.git). 
+        al repositorio remoto (https://github.com/UserName/astrobasico.git). 
         En otras palabra sube el sitio
 
         Nota: En el caso de linux se va a pedir un token que fue generado desde
@@ -212,14 +224,59 @@ Requisito: Tener git instalado
         del formulario y presionar el boton "Generar new token"
               
 
-Para actualizar la rama actual con archivos modificados en la misma rama y repositorio
----------------------------------------------------------------------------------------
+Para actualizar la rama actual con archivos modificados del codigo fuente en la rama main
+-----------------------------------------------------------------------------------------
 
 git add .
 
 git commit -m "2do commit"
 
 git push -u origin main
+
+Para subir la carpeta dist (Caso: Astro) para desplegar el sitio web
+(Html, Css, Js)
+---------------------------------------------------------------------
+    Una vez que funcione bien la pagina realizar los siguientes pasos:
+
+Requisito: Tener git instalado
+
+1) Desde github crear el repositorio astroBasico
+
+2) Desde un terminal en vs code:
+
+    a) git init
+
+    b) git add .
+
+    c) Ejecutar los comandos:
+            git config --global user.email "you@example.com"
+            git config --global user.name "UserName"
+
+    d) git commit -m "Primer commit"
+
+    e) git branch -M main
+        Nota: Crea una rama (branch) en el repositorio 
+
+    f) git remote add origin https://github.com/UserName/astrobasico.git
+        Nota: Asocia esta rama con el repositorio remoto de github:
+        https://github.com/UserName/astrobasico.git
+
+    g) npm run deploy
+        Nota: Este comando se utiliza para enviar los cambios confirmados
+        al repositorio remoto (https://github.com/UserName/astrobasico.git).
+        En otras palabra sube el sitio web (carpeta dist)
+        Esto creara la rama gh-pages en github donde almacenara los archivos
+        y directorios dentro del directorio dist (local).
+        Por medio de este comando va a autenticar al usuario del repositorio
+        de github y en password va a pedir la clave del token.
+
+        Este comnado automaticamente publica el sitio web sin necesidad de hacer
+        el paso de "Configurar GitHub Pages para desplegar la pagina" desde linux.
+
+        Nota: En el caso de linux se va a pedir un token que fue generado desde
+        github desde la opcion: Settings -> Developer Setting -> Personal access tokens 
+        Luego seleccionar classic token y seleccionar todos los checkboxes
+        del formulario y presionar el boton "Generar new token"
 
 
 Configurar GitHub Pages para desplegar la pagina
@@ -233,7 +290,7 @@ Configurar GitHub Pages para desplegar la pagina
 
     Debe salir un mensaje en la parte superior Github Pages source saved.
 
-    Luego se aparecera un enlace asi: https://UserName.github.io/htmlCssJsBasico/
+    Luego se aparecera un enlace asi: https://github.com/UserName/astrobasico.git
     que es la direccion desde donde la pagina web sera visualizada desde github
 
 
